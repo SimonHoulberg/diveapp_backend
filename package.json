@@ -4,7 +4,7 @@
   "description": "dive app backend",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/app.ts",
+    "dev": "ts-node ./src/app.ts & start redis",
     "test": "mocha --require ts-node/register --watch-extensions ts 'test/**/*.spec.ts' -timeout 5000"
   },
   "author": "",
