@@ -1,16 +1,27 @@
-import express from 'express'
-import dotevn from 'dotenv'
-import CompositionRoot from './CompositionRoot'
+import express, { Express } from "express"
+import mongoose from "mongoose"
+import diveRoutes from "./dive/routes"
+import userRoutes from "./user/routes"
 
-dotevn.config()
-CompositionRoot.configure()
+const app: Express = express()
 
-const PORT = process.env.PORT
+const PORT: string | number = process.env.PORT || 3000
 
-const app = express()
+app.use(diveRoutes)
+app.use(userRoutes)
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
-app.use('/auth', CompositionRoot.authRouter())
+const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.yrfvi.gcp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+const options = { useNewUrlParser: true, useUnifiedTopology: true }
+console.log(uri)
+mongoose.set("useFindAndModify", false)
 
-app.listen(PORT, () => console.log('listening on port '+PORT))
+mongoose
+  .connect(uri, options)
+  .then(() =>
+    app.listen(PORT, () =>
+      console.log(`Server running on http://localhost:${PORT}`)
+    )
+  )
+  .catch(error => {
+    throw error
+  })
