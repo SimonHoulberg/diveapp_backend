@@ -10,7 +10,7 @@ const PORT: string | number = process.env.PORT || 3000
 app.use(diveRoutes)
 app.use(userRoutes)
 
-const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.yrfvi.gcp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 const options = { useNewUrlParser: true, useUnifiedTopology: true }
 console.log(uri)
 mongoose.set("useFindAndModify", false)
