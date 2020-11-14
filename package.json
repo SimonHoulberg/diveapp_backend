@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "concurrently \"tsc -w\" \"nodemon output/js/app.js\"",
-    "test": "mocha --require ts-node/register --watch-extensions ts 'test/**/*.spec.ts' -timeout 5000"
+    "dev": "concurrently \"tsc -w\" \"nodemon build/app.js\""
   },
   "author": "",
   "license": "ISC",

@@ -1,5 +1,5 @@
 # compile directories
-output/
+build/
 
 # Logs
 logs
