@@ -1,50 +1,60 @@
-import express, { Express } from "express"
-import mongoose from "mongoose"
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const cors = require("cors");
 import diveRoutes from "./dive/routes"
-import userRoutes from "./user/routes"
-import cors from 'cors';
 import CompositionRoot from "./CompositionRoot";
 
-const app: Express = express()
+async function connectDB() {
+await mongoose.connect(
+  "mongodb+srv://diveapp:4Fixsimonspc@cluster0.yrfvi.gcp.mongodb.net/test_backend",
+  { useUnifiedTopology: true, useNewUrlParser: true }
+);
 
-const PORT = 3000
+console.log("db connected");
+}
+connectDB();
 
-//options for cors midddleware
-const cors_options: cors.CorsOptions = {
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'X-Access-Token',
-  ],
-  credentials: true,
-  methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-  origin: "http://localhost:8000",
-  preflightContinue: false,
-};
+app.use(function(req, res, next) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
 
-app.use(cors(cors_options));
+      // Request methods you wish to allow
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+      // Request headers you wish to allow
+      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+
+      // Set to true if you need the website to include cookies in the requests sent
+      // to the API (e.g. in case you use sessions)
+      res.setHeader('Access-Control-Allow-Credentials', true);
+
+      // Pass to next layer of middleware
+      next();
+});
 
 // our routes goes here
+
+// this takes the post body
+app.use(express.json({ extended: false }));
+// signup route api
+app.post("/signup", async (req, res) => {
+const { email, password } = req.body;
+console.log(email);
+console.log(password);
+var schema = new mongoose.Schema({ email: "string", password: "string" });
+var User = mongoose.model("User", schema);
+
+let user = new User({
+  email,
+  password,
+});
+console.log(user);
+
+await user.save();
+res.json({ token: "1234567890" });
+// check db for email if email say the email is already taken
+//   return res.send("Signup api route");
+});
+
 app.use(diveRoutes)
-app.use(userRoutes)
-app.use('/auth', CompositionRoot.authRouter())
-// routes end
-
-app.options('*', cors(cors_options));
-
-const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
-const options = { useNewUrlParser: true, useUnifiedTopology: true }
-
-mongoose.set("useFindAndModify", false)
-mongoose
-  .connect(uri, options)
-  .then(() =>
-    app.listen(PORT, () =>
-      console.log(`Server running on http://localhost:${PORT}`)
-    )
-  )
-  .catch(error => {
-    throw error
-  })
+app.listen(5000, () => console.log("Example app listening on port 5000!"));
