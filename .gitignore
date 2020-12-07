@@ -1,6 +1,10 @@
 # compile directories
 build/
 
+# package log file
+
+package-lock.json
+
 # Logs
 logs
 *.log
