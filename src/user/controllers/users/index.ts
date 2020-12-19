@@ -9,9 +9,42 @@ const bcrypt = require("bcrypt");
 
 const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const {params: { id }} = req
-    const user: IUser | null = await User.findById({ _id: id })
-    res.status(200).json({ user })
+
+    const authHeader = req.headers.authorization
+    if(!authHeader) {
+      res.status(401).json({ error: 'Authorization header required' })
+    } else {
+      var parts = authHeader.split(' ');
+      var token;
+
+      const allUsers: IUser[] = await User.find()
+
+      if (parts.length === 2) {
+        var scheme = parts[0];
+        var credentials = parts[1];
+     
+        // if (/^Bearer$/i.test(scheme)) {
+        //   token = credentials;
+        //   //verify token
+        //   var output = jwt.verify(token, "superSecretKey", function(err, decoded) {
+        //     if (err) {
+        //         res.status(401).json({ msg: err });
+        //         console.warn("fail");
+        //     } else {
+        //         res.status(200).json({decoded})
+        //         console.warn("success");
+        //         // if everything is good, save to request for use in other routes
+        //         //req.decoded = decoded;
+        //     }
+        //     console.log(output);
+        // });
+        // }
+      }
+    }
+
+
+   // const user: IUser | null = await jwt.
+    //res.status(200).json({  })
   } catch (error) {
     throw error
   }
@@ -77,7 +110,7 @@ const signUp = async (req: Request, res: Response): Promise<void> => {
       // save user in the database, async
       const newUser: IUser = await user.save()
       // sign in and get token
-      var token = jwt.sign({id: newUser.id}, newUser.password);
+      var token = jwt.sign({name: newUser.name}, 'superSecretKey');
       // debugging stuff
       console.log("[SIGN-UP] \n\tuser: " + newUser.name + ", \n\temail: " + newUser.email + ", \n\tpassword: " + newUser.password);
       // return token
@@ -110,7 +143,8 @@ const logIn = async (req: Request, res: Response): Promise<void> => {
       // if compare true, then login
       if (compare) { 
         // login and get token
-        var token = jwt.sign({ id: loadedUser.id }, loadedUser.password);
+
+        var token = jwt.sign({ name: checkUser.name }, "superSecretKey");
         // return http 200 + token
         res.status(200).json({ token: token });
       } else {
