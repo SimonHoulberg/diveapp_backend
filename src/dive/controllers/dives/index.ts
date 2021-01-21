@@ -24,21 +24,20 @@ const getDives = async (req: Request, res: Response): Promise<void> => {
 
 const addDive = async (req: Request, res: Response): Promise<void> => {
     try {
-      const body = req.body as Pick<IDive, "name" | "location" | "date" | "attendees">
+      const body = req.body as Pick<IDive, "dive">
   
       const dive: IDive = new Dive({
-        name: body.name,
-        location: body.location,
-        date: body.date,
-        attendees: body.attendees
+        dive: body.dive//,
+        // location: body.location,
+        // date: body.date,
+        // attendees: body.attendees
       })
   
-      const newDive: IDive = await dive.save()
-      const allDives: IDive[] = await Dive.find()
+      await dive.save()
   
       res
         .status(201)
-        .json({ message: "Dive added", dive: newDive, dives: allDives})
+        .json({ msg: "Dive added"})
     } catch (error) {
       throw error
     }
@@ -50,15 +49,14 @@ const updateDive = async (req: Request, res: Response): Promise<void> => {
         params: { id },
         body,
       } = req
-      const updateDive: IDive | null = await Dive.findByIdAndUpdate(
+
+      await Dive.findByIdAndUpdate(
         { _id: id },
         body
       )
-      const allDives: IDive[] = await Dive.find()
+
       res.status(200).json({
-        message: "Dive updated",
-        dive: updateDive,
-        dives: allDives,
+        msg: "Dive updated"
       })
     } catch (error) {
       throw error
@@ -67,14 +65,11 @@ const updateDive = async (req: Request, res: Response): Promise<void> => {
 
 const deleteDive = async (req: Request, res: Response): Promise<void> => {
     try {
-      const deletedDive: IDive | null = await Dive.findByIdAndRemove(
+      await Dive.findByIdAndRemove(
         req.params.id
       )
-      const allDives: IDive[] = await Dive.find()
       res.status(200).json({
-        message: "Dive deleted",
-        dive: deletedDive,
-        dives: allDives,
+        msg: "Dive deleted",
       })
     } catch (error) {
       throw error

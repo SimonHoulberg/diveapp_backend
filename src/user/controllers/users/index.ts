@@ -23,22 +23,22 @@ const getUser = async (req: Request, res: Response): Promise<void> => {
         var scheme = parts[0];
         var credentials = parts[1];
      
-        // if (/^Bearer$/i.test(scheme)) {
-        //   token = credentials;
-        //   //verify token
-        //   var output = jwt.verify(token, "superSecretKey", function(err, decoded) {
-        //     if (err) {
-        //         res.status(401).json({ msg: err });
-        //         console.warn("fail");
-        //     } else {
-        //         res.status(200).json({decoded})
-        //         console.warn("success");
-        //         // if everything is good, save to request for use in other routes
-        //         //req.decoded = decoded;
-        //     }
-        //     console.log(output);
-        // });
-        // }
+        if (/^Bearer$/i.test(scheme)) {
+          token = credentials;
+          //verify token
+          var output = jwt.verify(token, "superSecretKey", function(err, decoded) {
+            if (err) {
+                res.status(401).json({ msg: err });
+                console.warn("fail");
+            } else {
+                res.status(200).json({decoded})
+                console.warn("success");
+                // if everything is good, save to request for use in other routes
+                //req.decoded = decoded;
+            }
+            console.log(output);
+        });
+        }
       }
     }
 
